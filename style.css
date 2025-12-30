@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --cyan-glow: rgba(34, 211, 238, 0.3);
+}
+
+body {
+    background-color: #000000;
+    overflow-x: hidden;
+}
+
+.font-bbh {
+    font-family: 'BBH Bartle', sans-serif;
+}
+
+.font-sans {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+section, article {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover, article:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px var(--cyan-glow);
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #22d3ee;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #0891b2;
+}
