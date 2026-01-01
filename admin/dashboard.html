@@ -54,11 +54,23 @@
             <div class="border-2 border-white rounded-[40px] p-8 bg-black shadow-[0_0_20px_rgba(255,255,255,0.05)]">
                 <h2 class="font-bbh text-2xl mb-8 border-b border-zinc-800 pb-4 uppercase text-center">Register State Jurisdiction</h2>
                 <form id="countryForm" class="space-y-6">
+                    <div class="p-6 bg-zinc-900/50 border border-zinc-800 rounded-2xl">
+                        <label class="block text-xs font-bbh uppercase text-zinc-500 mb-2 tracking-widest">GitHub Session Token (PAT)</label>
+                        <input type="password" id="sessionTokenCountry" required placeholder="github_pat_..." class="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none text-zinc-400 font-mono text-sm">
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <input type="text" id="countryName" placeholder="Country Name" required class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none">
-                        <input type="url" id="leaderImg" placeholder="Leader Image URL" required class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none">
+                        <div>
+                            <label class="block text-[10px] text-zinc-500 uppercase mb-2 ml-2 tracking-widest">Leader Portrait</label>
+                            <input type="file" id="leaderFile" accept="image/*" required class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 file:bg-white file:text-black file:border-none file:rounded-md file:px-4 file:py-1 file:mr-4 file:font-bbh cursor-pointer text-xs">
+                        </div>
                     </div>
-                    <input type="url" id="flagUrl" placeholder="Flag Image URL" required class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none">
+                    
+                    <div>
+                        <label class="block text-[10px] text-zinc-500 uppercase mb-2 ml-2 tracking-widest">State Flag</label>
+                        <input type="file" id="flagFile" accept="image/*" required class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 file:bg-white file:text-black file:border-none file:rounded-md file:px-4 file:py-1 file:mr-4 file:font-bbh cursor-pointer text-xs">
+                    </div>
                     
                     <div>
                         <label class="block text-[10px] text-zinc-500 uppercase mb-2 ml-2 tracking-widest">Geopolitical Data (Markdown Supported)</label>
@@ -73,12 +85,13 @@
     </main>
 
     <script>
-        const GITHUB_CONFIG = { owner: "Reyynald17", repo: "arcadia-osint", path: "assets/news/" };
+        const GITHUB_CONFIG = { owner: "Reyynald17", repo: "arcadia-osint" };
         const JSONBIN_CONFIG = {
             apiKey: "$2a$10$M55GAQGmXXRYA96RdrzW.uAiqpU.X2JqBMvXOyp0dDkE.4zO/0dfa",
             binNews: "69538bcd43b1c97be90de1e6",
             binCountries: "6954de83ae596e708fbbca37"
         };
+
         function switchTab(tab) {
             const newsSec = document.getElementById('section-news');
             const countrySec = document.getElementById('section-countries');
@@ -97,6 +110,36 @@
                 newsBtn.className = "px-4 py-2 rounded-lg text-xs font-bbh uppercase text-gray-500 hover:text-white";
             }
         }
+
+        async function uploadToGithub(file, token, folderPath) {
+            const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+            const reader = new FileReader();
+            const base64Data = await new Promise((resolve) => {
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.readAsDataURL(file);
+            });
+
+            const response = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${folderPath}${fileName}`, {
+                method: 'PUT',
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: `Asset Upload: ${fileName}`,
+                    content: base64Data
+                })
+            });
+
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(`GitHub Error: ${errData.message}`);
+            }
+
+            const result = await response.json();
+            return result.content.download_url;
+        }
+
         document.getElementById('newsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtnNews');
@@ -106,21 +149,7 @@
 
             try {
                 const file = document.getElementById('imageFile').files[0];
-                const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-                const reader = new FileReader();
-                const base64Data = await new Promise(resolve => {
-                    reader.onload = () => resolve(reader.result.split(',')[1]);
-                    reader.readAsDataURL(file);
-                });
-
-                const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}${fileName}`, {
-                    method: 'PUT',
-                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: `Intel: ${fileName}`, content: base64Data })
-                });
-
-                if (!ghRes.ok) throw new Error("GitHub Upload Failed.");
-                const ghData = await ghRes.json();
+                const imageUrl = await uploadToGithub(file, token, "assets/news/");
                 
                 btn.innerText = "UPDATING NEWS DATABASE...";
                 const binRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binNews}/latest`, {
@@ -132,7 +161,7 @@
                 list.unshift({
                     id: Date.now(),
                     title: document.getElementById('title').value,
-                    image: ghData.content.download_url,
+                    image: imageUrl,
                     content: document.getElementById('content').value.split('\n').filter(p => p.trim() !== ""),
                     date: new Date().toLocaleDateString('en-GB')
                 });
@@ -154,10 +183,20 @@
         document.getElementById('countryForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('submitBtnCountry');
+            const token = document.getElementById('sessionTokenCountry').value;
             btn.disabled = true;
-            btn.innerText = "UPDATING COUNTRY ARCHIVE...";
+            btn.innerText = "UPLOADING ASSETS...";
 
             try {
+                const leaderFile = document.getElementById('leaderFile').files[0];
+                const flagFile = document.getElementById('flagFile').files[0];
+
+                const [leaderUrl, flagUrl] = await Promise.all([
+                    uploadToGithub(leaderFile, token, "assets/countries/leaders/"),
+                    uploadToGithub(flagFile, token, "assets/countries/flags/")
+                ]);
+
+                btn.innerText = "UPDATING COUNTRY ARCHIVE...";
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binCountries}/latest`, {
                     headers: { "X-Master-Key": JSONBIN_CONFIG.apiKey }
                 });
@@ -166,8 +205,8 @@
 
                 list.unshift({
                     name: document.getElementById('countryName').value,
-                    president_image: document.getElementById('leaderImg').value,
-                    flag_url: document.getElementById('flagUrl').value,
+                    president_image: leaderUrl,
+                    flag_url: flagUrl,
                     description: document.getElementById('countryDesc').value
                 });
 
