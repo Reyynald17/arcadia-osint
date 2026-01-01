@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcadia | Country Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-black text-white min-h-screen font-sans">
+
+    <nav class="fixed top-0 w-full h-16 bg-white/5 backdrop-blur-md border-b border-white/10 flex items-center px-12 z-50 justify-between">
+        <div class="h-full flex items-center space-x-4 py-3">
+            <img src="assets/logo.png" alt="logo" class="h-full w-auto object-contain brightness-110">
+        </div>
+        <div class="flex gap-8 text-sm font-bbh uppercase tracking-widest">
+            <a href="index.html" class="hover:text-cyan-400 transition">Home</a>
+            <a href="news.html" class="hover:text-cyan-400 transition">News</a>
+            <a href="countries.html" class="text-cyan-400">Countries</a>
+        </div>
+    </nav>
+
+    <main class="w-full max-w-6xl mx-auto mt-28 mb-12 px-6">
+        <header class="mb-12 border-l-4 border-cyan-500 pl-6">
+            <h1 class="font-bbh text-4xl uppercase tracking-tighter">Global Jurisdictions</h1>
+            <p class="text-gray-500 text-sm mt-2 uppercase tracking-widest">Database of Sovereign Entities & Leaders</p>
+        </header>
+
+        <div id="countries-feed" class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <p class="col-span-full text-center text-cyan-500 animate-pulse font-bbh">Accessing Global Archives...</p>
+        </div>
+    </main>
+
+    <script>
+        const CONFIG = {
+            apiKey: "$2a$10$M55GAQGmXXRYA96RdrzW.uAiqpU.X2JqBMvXOyp0dDkE.4zO/0dfa",
+            binCountries: "6954de83ae596e708fbbca37"
+        };
+
+        async function fetchCountries() {
+            const feed = document.getElementById('countries-feed');
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${CONFIG.binCountries}/latest`, {
+                    headers: { "X-Master-Key": CONFIG.apiKey }
+                });
+                const data = await response.json();
+                const countries = data.record.countries || [];
+
+                feed.innerHTML = countries.map(c => `
+                    <article class="border-2 border-cyan-400/30 rounded-[40px] p-8 bg-zinc-950/50 flex flex-col shadow-lg transition-all hover:border-cyan-400">
+                        <div class="flex items-center space-x-6 mb-8">
+                            <div class="relative w-24 h-32 overflow-hidden rounded-xl border border-zinc-700">
+                                <img src="${c.president_image}" alt="Leader" class="w-full h-full object-cover grayscale hover:grayscale-0 transition duration-500">
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <img src="${c.flag_url}" alt="Flag" class="w-8 h-5 object-cover border border-white/20">
+                                    <h2 class="font-bbh text-xl text-cyan-400 uppercase tracking-wide">${c.name}</h2>
+                                </div>
+                                <span class="text-[10px] bg-cyan-900/30 text-cyan-400 px-3 py-1 rounded-full border border-cyan-800 uppercase font-bold tracking-tighter">Verified State Data</span>
+                            </div>
+                        </div>
+
+                        <div class="prose prose-invert prose-sm max-w-none text-gray-400 font-sans leading-relaxed text-justify">
+                            ${marked.parse(c.description)}
+                        </div>
+                    </article>
+                `).join('');
+            } catch (err) {
+                feed.innerHTML = "<p class='text-red-500'>Connection error.</p>";
+            }
+        }
+        document.addEventListener('DOMContentLoaded', fetchCountries);
+    </script>
+</body>
+</html>
