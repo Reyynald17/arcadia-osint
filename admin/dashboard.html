@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arcadia Admin | Manual Command</title>
+    <title>Arcadia Admin | Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../style.css">
     <script>
@@ -14,135 +14,178 @@
 </head>
 <body class="bg-black text-white min-h-screen font-sans">
 
-    <nav class="border-b border-cyan-900 bg-black/50 p-6 flex justify-between items-center">
-        <h1 class="font-bbh text-xl text-cyan-400 tracking-widest uppercase">Intelligence Dashboard</h1>
-        <button onclick="logout()" class="text-xs border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-all">TERMINATE SESSION</button>
+    <nav class="border-b border-cyan-900 bg-black/50 p-6 flex justify-between items-center sticky top-0 z-50 backdrop-blur-md">
+        <div class="flex items-center space-x-6">
+            <h1 class="font-bbh text-xl text-cyan-400 tracking-widest uppercase">Command Center</h1>
+            <div class="flex space-x-2 bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+                <button onclick="switchTab('news')" id="tab-news" class="px-4 py-2 rounded-lg text-xs font-bbh uppercase transition-all bg-cyan-500 text-black">News</button>
+                <button onclick="switchTab('countries')" id="tab-countries" class="px-4 py-2 rounded-lg text-xs font-bbh uppercase transition-all text-gray-500 hover:text-white">Countries</button>
+            </div>
+        </div>
+        <button onclick="logout()" class="text-xs border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-all uppercase">Terminate Session</button>
     </nav>
 
     <main class="max-w-4xl mx-auto mt-12 px-6 pb-20">
-        <section class="border-2 border-cyan-400 rounded-[40px] p-8 bg-black shadow-[0_0_20px_rgba(34,211,238,0.1)]">
-            <h2 class="font-bbh text-2xl mb-8 border-b border-gray-800 pb-4 uppercase text-center">Deploy New Intelligence</h2>
-            
-            <form id="newsForm" class="space-y-6">
-                <div class="p-6 bg-red-900/10 border border-red-900/50 rounded-2xl mb-8">
-                    <label class="block text-xs font-bbh uppercase text-red-500 mb-2">GitHub Session Token (PAT)</label>
-                    <input type="password" id="sessionToken" required placeholder="github_pat_..." 
-                           class="w-full bg-black border border-red-900 rounded-xl px-4 py-3 focus:border-red-500 outline-none transition-all text-red-400">
-                    <p class="text-[10px] text-gray-500 mt-2 uppercase tracking-tighter">Token ini hanya digunakan untuk sesi ini dan tidak akan disimpan di server.</p>
-                </div>
+        
+        <section id="section-news" class="space-y-6">
+            <div class="border-2 border-cyan-400 rounded-[40px] p-8 bg-black shadow-[0_0_20px_rgba(34,211,238,0.1)]">
+                <h2 class="font-bbh text-2xl mb-8 border-b border-gray-800 pb-4 uppercase text-center text-cyan-400">Deploy New Intelligence (News)</h2>
+                <form id="newsForm" class="space-y-6">
+                    <div class="p-6 bg-red-900/10 border border-red-900/50 rounded-2xl">
+                        <label class="block text-xs font-bbh uppercase text-red-500 mb-2">GitHub Session Token (PAT)</label>
+                        <input type="password" id="sessionTokenNews" required placeholder="github_pat_..." class="w-full bg-black border border-red-900 rounded-xl px-4 py-3 focus:border-red-500 outline-none text-red-400 font-mono text-sm">
+                    </div>
 
-                <div>
-                    <label class="block text-xs font-bbh uppercase text-gray-500 mb-2">Operation Title</label>
-                    <input type="text" id="title" required class="w-full bg-zinc-900 border border-gray-800 rounded-xl px-4 py-3 focus:border-cyan-400 outline-none transition-all">
-                </div>
+                    <input type="text" id="title" required placeholder="Operation Title" class="w-full bg-zinc-900 border border-gray-800 rounded-xl px-4 py-3 focus:border-cyan-400 outline-none">
+                    
+                    <div>
+                        <label class="block text-[10px] text-gray-500 uppercase mb-2 ml-2 tracking-widest">Visual Asset (Image)</label>
+                        <input type="file" id="imageFile" accept="image/*" required class="w-full bg-zinc-900 border border-gray-800 rounded-xl px-4 py-3 file:bg-cyan-500 file:border-none file:rounded-md file:px-4 file:py-1 file:mr-4 file:font-bbh cursor-pointer text-sm">
+                    </div>
 
-                <div>
-                    <label class="block text-xs font-bbh uppercase text-gray-500 mb-2">Visual Asset</label>
-                    <input type="file" id="imageFile" accept="image/*" required class="w-full bg-zinc-900 border border-gray-800 rounded-xl px-4 py-3 file:bg-cyan-500 file:border-none file:rounded-md file:px-4 file:py-1 file:mr-4 file:font-bbh cursor-pointer text-sm">
-                </div>
+                    <textarea id="content" rows="6" required placeholder="Intelligence Brief..." class="w-full bg-zinc-900 border border-gray-800 rounded-xl px-4 py-3 focus:border-cyan-400 outline-none"></textarea>
 
-                <div>
-                    <label class="block text-xs font-bbh uppercase text-gray-500 mb-2">Intelligence Brief (Enter for new paragraph)</label>
-                    <textarea id="content" rows="6" required class="w-full bg-zinc-900 border border-gray-800 rounded-xl px-4 py-3 focus:border-cyan-400 outline-none transition-all"></textarea>
-                </div>
-
-                <button type="submit" id="submitBtn" class="w-full bg-cyan-500 text-black font-bbh py-4 rounded-xl hover:bg-cyan-400 transition-all font-bold uppercase tracking-widest">Execute Deployment</button>
-            </form>
+                    <button type="submit" id="submitBtnNews" class="w-full bg-cyan-500 text-black font-bbh py-4 rounded-xl hover:bg-cyan-400 transition-all font-bold uppercase tracking-widest shadow-lg shadow-cyan-500/20">Execute News Deployment</button>
+                </form>
+            </div>
         </section>
+
+        <section id="section-countries" class="hidden space-y-6">
+            <div class="border-2 border-white rounded-[40px] p-8 bg-black shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                <h2 class="font-bbh text-2xl mb-8 border-b border-zinc-800 pb-4 uppercase text-center">Register State Jurisdiction</h2>
+                <form id="countryForm" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <input type="text" id="countryName" placeholder="Country Name" required class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none">
+                        <input type="url" id="leaderImg" placeholder="Leader Image URL" required class="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none">
+                    </div>
+                    <input type="url" id="flagUrl" placeholder="Flag Image URL" required class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none">
+                    
+                    <div>
+                        <label class="block text-[10px] text-zinc-500 uppercase mb-2 ml-2 tracking-widest">Geopolitical Data (Markdown Supported)</label>
+                        <textarea id="countryDesc" rows="8" required placeholder="# Country Overview..." class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 focus:border-white outline-none font-mono text-sm"></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtnCountry" class="w-full bg-white text-black font-bbh py-4 rounded-xl hover:bg-zinc-300 transition-all font-bold uppercase tracking-widest">Authorize State Entry</button>
+                </form>
+            </div>
+        </section>
+
     </main>
 
     <script>
-        const GITHUB_CONFIG = {
-            owner: "Reyynald17",
-            repo: "arcadia-osint",
-            path: "assets/news/"
-        };
-
+        const GITHUB_CONFIG = { owner: "Reyynald17", repo: "arcadia-osint", path: "assets/news/" };
         const JSONBIN_CONFIG = {
-            binId: "69538bcd43b1c97be90de1e6",
-            apiKey: "$2a$10$M55GAQGmXXRYA96RdrzW.uAiqpU.X2JqBMvXOyp0dDkE.4zO/0dfa" 
+            apiKey: "$2a$10$M55GAQGmXXRYA96RdrzW.uAiqpU.X2JqBMvXOyp0dDkE.4zO/0dfa",
+            binNews: "69538bcd43b1c97be90de1e6",
+            binCountries: "6954de83ae596e708fbbca37"
         };
+        function switchTab(tab) {
+            const newsSec = document.getElementById('section-news');
+            const countrySec = document.getElementById('section-countries');
+            const newsBtn = document.getElementById('tab-news');
+            const countryBtn = document.getElementById('tab-countries');
 
-        const newsForm = document.getElementById('newsForm');
-
-        newsForm.addEventListener('submit', async (e) => {
+            if (tab === 'news') {
+                newsSec.classList.remove('hidden');
+                countrySec.classList.add('hidden');
+                newsBtn.className = "px-4 py-2 rounded-lg text-xs font-bbh uppercase bg-cyan-500 text-black";
+                countryBtn.className = "px-4 py-2 rounded-lg text-xs font-bbh uppercase text-gray-500 hover:text-white";
+            } else {
+                newsSec.classList.add('hidden');
+                countrySec.classList.remove('hidden');
+                countryBtn.className = "px-4 py-2 rounded-lg text-xs font-bbh uppercase bg-white text-black";
+                newsBtn.className = "px-4 py-2 rounded-lg text-xs font-bbh uppercase text-gray-500 hover:text-white";
+            }
+        }
+        document.getElementById('newsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const submitBtn = document.getElementById('submitBtn');
-            const token = document.getElementById('sessionToken').value;
-
-            submitBtn.disabled = true;
-            submitBtn.innerText = "UPLOADING TO GITHUB...";
+            const btn = document.getElementById('submitBtnNews');
+            const token = document.getElementById('sessionTokenNews').value;
+            btn.disabled = true;
+            btn.innerText = "UPLOADING TO GITHUB...";
 
             try {
                 const file = document.getElementById('imageFile').files[0];
                 const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
                 const reader = new FileReader();
-                
-                const base64Data = await new Promise((resolve) => {
+                const base64Data = await new Promise(resolve => {
                     reader.onload = () => resolve(reader.result.split(',')[1]);
                     reader.readAsDataURL(file);
                 });
 
-                const ghResponse = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}${fileName}`, {
+                const ghRes = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}${fileName}`, {
                     method: 'PUT',
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        message: `Intel Update: ${fileName}`,
-                        content: base64Data
-                    })
+                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: `Intel: ${fileName}`, content: base64Data })
                 });
 
-                const ghResult = await ghResponse.json();
-                if (!ghResponse.ok) throw new Error(`GitHub Error: ${ghResult.message}`);
-
-                const imageUrl = ghResult.content.download_url;
-
-                submitBtn.innerText = "UPDATING DATABASE...";
-                const binRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}/latest`, {
+                if (!ghRes.ok) throw new Error("GitHub Upload Failed.");
+                const ghData = await ghRes.json();
+                
+                btn.innerText = "UPDATING NEWS DATABASE...";
+                const binRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binNews}/latest`, {
                     headers: { "X-Master-Key": JSONBIN_CONFIG.apiKey }
                 });
                 const binData = await binRes.json();
-                let newsList = binData.record.news || [];
+                let list = binData.record.news || [];
 
-                const newEntry = {
+                list.unshift({
                     id: Date.now(),
                     title: document.getElementById('title').value,
-                    image: imageUrl,
+                    image: ghData.content.download_url,
                     content: document.getElementById('content').value.split('\n').filter(p => p.trim() !== ""),
                     date: new Date().toLocaleDateString('en-GB')
-                };
-                
-                newsList.unshift(newEntry);
-
-                const updateRes = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binId}`, {
-                    method: 'PUT',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Master-Key": JSONBIN_CONFIG.apiKey
-                    },
-                    body: JSON.stringify({ news: newsList })
                 });
 
-                if (!updateRes.ok) throw new Error("JSONBin Update Failed.");
+                await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binNews}`, {
+                    method: 'PUT',
+                    headers: { "Content-Type": "application/json", "X-Master-Key": JSONBIN_CONFIG.apiKey },
+                    body: JSON.stringify({ news: list })
+                });
 
-                alert("INTELLIGENCE DEPLOYED SUCCESSFULLY.");
-                newsForm.reset();
-            } catch (err) {
-                console.error(err);
-                alert(`CRITICAL ERROR: ${err.message}`);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Execute Deployment";
+                alert("NEWS DEPLOYED SUCCESSFULLY.");
+                document.getElementById('newsForm').reset();
+            } catch (err) { alert(err.message); } finally {
+                btn.disabled = false;
+                btn.innerText = "Execute News Deployment";
             }
         });
 
-        function logout() {
-            sessionStorage.clear();
-            window.location.href = "login.html";
-        }
+        document.getElementById('countryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtnCountry');
+            btn.disabled = true;
+            btn.innerText = "UPDATING COUNTRY ARCHIVE...";
+
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binCountries}/latest`, {
+                    headers: { "X-Master-Key": JSONBIN_CONFIG.apiKey }
+                });
+                const data = await res.json();
+                let list = data.record.countries || [];
+
+                list.unshift({
+                    name: document.getElementById('countryName').value,
+                    president_image: document.getElementById('leaderImg').value,
+                    flag_url: document.getElementById('flagUrl').value,
+                    description: document.getElementById('countryDesc').value
+                });
+
+                await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_CONFIG.binCountries}`, {
+                    method: 'PUT',
+                    headers: { "Content-Type": "application/json", "X-Master-Key": JSONBIN_CONFIG.apiKey },
+                    body: JSON.stringify({ countries: list })
+                });
+
+                alert("STATE DATA RECORDED.");
+                document.getElementById('countryForm').reset();
+            } catch (err) { alert(err.message); } finally {
+                btn.disabled = false;
+                btn.innerText = "Authorize State Entry";
+            }
+        });
+
+        function logout() { sessionStorage.clear(); window.location.href = "login.html"; }
     </script>
 </body>
 </html>
