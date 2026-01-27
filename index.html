@@ -10,53 +10,45 @@
     <link href="https://fonts.googleapis.com/css2?family=BBH+Bartle&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-black text-white min-h-screen">
-
-    <nav class="fixed top-0 w-full h-16 bg-white/5 backdrop-blur-md border-b border-white/10 flex items-center px-12 z-50 justify-between">
+<body class="bg-black text-white min-h-screen font-sans"> 
+    <nav class="fixed top-0 w-full h-16 bg-white/5 backdrop-blur-md border-b border-white/10 flex items-center px-4 sm:px-6 md:px-12 z-50 justify-between">
         <div class="h-full flex items-center space-x-4 py-3">
-            <img src="assets/logo.png" alt="navbar-logo" class="h-full w-auto object-contain brightness-110">
+            <img src="assets/logo.png" alt="navbar-logo" class="h-10 md:h-full w-auto object-contain brightness-110">
         </div>
-        <div class="flex gap-8 text-sm font-bbh uppercase tracking-widest">
+
+        <div class="flex gap-4 sm:gap-8 text-sm font-bbh uppercase tracking-widest">
             <a href="index.html" class="text-cyan-400">Home</a>
             <a href="news.html" class="text-white hover:text-cyan-400 transition-colors duration-300">News</a>
             <a href="#" class="text-white hover:text-cyan-400 transition-colors duration-300">Countries</a>
         </div>
     </nav>
 
-    <main class="w-full max-w-6xl mx-auto mt-24 mb-12 px-6 space-y-8">
+    <main class="w-full max-w-6xl mx-auto mt-24 mb-12 px-4 sm:px-6 md:px-6 lg:px-6 space-y-8">
         
         <section class="text-center">
-            <h1 class="font-bbh text-2xl mb-6 tracking-widest uppercase"><small>Welcome to <br><strong>Arcadia OSINT</strong> Page!</small></h1>
-            <div class="border-2 border-cyan-400 rounded-[40px] p-12 flex flex-col items-center space-y-8 bg-black shadow-[0_0_15px_rgba(34,211,238,0.2)]">
-                <img src="assets/logo.png" alt="logo" class="w-40 h-40 brightness-150">
-                <p class="text-xl italic text-gray-300">"Your Country, Your Decisions."</p>
+            <h1 class="font-bbh text-2xl sm:text-3xl mb-6 tracking-widest uppercase"><small>Welcome to <br><strong>Arcadia OSINT</strong> Page!</small></h1>
+            <div class="border-2 border-cyan-400 rounded-2xl sm:rounded-[40px] p-6 sm:p-12 flex flex-col items-center space-y-8 bg-black shadow-[0_0_15px_rgba(34,211,238,0.2)]"> <!-- smaller padding on mobile -->
+                <img src="assets/logo.png" alt="logo" class="w-28 h-28 sm:w-40 sm:h-40 brightness-150"> <!-- responsive logo -->
+                <p class="text-lg sm:text-xl italic text-gray-300">"Your Country, Your Decisions."</p>
             </div>
         </section>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <article class="border-2 border-cyan-400 rounded-[40px] p-8 flex flex-col h-[500px] shadow-[0_0_15px_rgba(34,211,238,0.1)]">
-                <h2 class="font-bbh text-2xl text-center mb-4 border-b border-gray-600 pb-2 mx-auto w-3/4 uppercase">Recent<br>News</h2>
+            <!-- recent news: responsive height -->
+            <article class="border-2 border-cyan-400 rounded-2xl sm:rounded-[40px] p-6 sm:p-8 flex flex-col h-64 md:h-[500px] shadow-[0_0_15px_rgba(34,211,238,0.1)]">
+                <h2 class="font-bbh text-xl md:text-2xl text-center mb-4 border-b border-gray-600 pb-2 mx-auto w-3/4 uppercase">Recent<br>News</h2>
                 <div id="recent-news-content" class="mt-4 flex-grow overflow-y-auto pr-2 custom-scrollbar">
                     <p class="text-center text-cyan-500 animate-pulse font-bbh mt-10">Synchronizing Intel...</p>
                 </div>
             </article>
-
-            <article class="border-2 border-cyan-400 rounded-[40px] p-8 shadow-[0_0_15px_rgba(34,211,238,0.1)]">
-                <h2 class="font-bbh text-2xl text-center mb-6 uppercase">About Arcadia</h2>
+            <article class="border-2 border-cyan-400 rounded-2xl sm:rounded-[40px] p-6 sm:p-8 shadow-[0_0_15px_rgba(34,211,238,0.1)]">
+                <h2 class="font-bbh text-xl md:text-2xl text-center mb-6 uppercase">About Arcadia</h2>
                 <div class="text-sm leading-relaxed space-y-4 text-justify font-sans">
                     <p>Arcadia OSINT adalah platform monitoring intelijen mandiri yang fokus pada analisis pergerakan geopolitik dan keamanan domestik.</p>
                     <p>Sistem ini beroperasi secara objektif untuk menyajikan data faktual kepada para agen dan warga sipil di zona konflik.</p>
                 </div>
             </article>
         </div>
-
-        <section class="border-2 border-cyan-400 rounded-[40px] p-8 w-full shadow-[0_0_15px_rgba(34,211,238,0.1)]">
-            <h2 class="font-bbh text-2xl text-center mb-8 uppercase">list of countries</h2>
-            <div id="countries-list" class="space-y-8">
-                <p class="text-center text-cyan-500 animate-pulse font-bbh">Loading Database...</p>
-            </div>
-        </section>
-
     </main>
 
     <script src="assets/js/api-handler.js"></script>
